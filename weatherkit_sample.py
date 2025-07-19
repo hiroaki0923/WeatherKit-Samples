@@ -10,6 +10,7 @@ Note: PyJWT requires the cryptography package for ES256 algorithm support
 """
 
 import os
+import sys
 import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -83,17 +84,59 @@ def fetch_weather(latitude, longitude, datasets=None):
     resp.raise_for_status()
     return resp.json()
 
+# ===== Parse Command Line Arguments =====
+def parse_coordinates():
+    """Parse latitude and longitude from command line arguments.
+    
+    Usage:
+        python weatherkit_sample.py [latitude] [longitude]
+        
+    If no arguments provided, defaults to Tokyo Station coordinates.
+    """
+    # Default coordinates: Tokyo Station
+    default_lat, default_lon = 35.681236, 139.767125
+    
+    if len(sys.argv) == 1:
+        # No arguments provided, use default
+        return default_lat, default_lon
+    elif len(sys.argv) == 3:
+        # Both latitude and longitude provided
+        try:
+            lat = float(sys.argv[1])
+            lon = float(sys.argv[2])
+            
+            # Basic validation
+            if not (-90 <= lat <= 90):
+                print("エラー: 緯度は-90から90の範囲で入力してください")
+                sys.exit(1)
+            if not (-180 <= lon <= 180):
+                print("エラー: 経度は-180から180の範囲で入力してください")
+                sys.exit(1)
+                
+            return lat, lon
+        except ValueError:
+            print("エラー: 緯度と経度は数値で入力してください")
+            print("使用方法: python weatherkit_sample.py [緯度] [経度]")
+            print("例: python weatherkit_sample.py 35.681236 139.767125")
+            sys.exit(1)
+    else:
+        print("エラー: 引数の数が正しくありません")
+        print("使用方法: python weatherkit_sample.py [緯度] [経度]")
+        print("例: python weatherkit_sample.py 35.681236 139.767125")
+        print("引数なしの場合は東京駅の座標を使用します")
+        sys.exit(1)
+
 # ===== Main Execution =====
 if __name__ == "__main__":
-    # Example: Coordinates for Tokyo Station
-    lat, lon = 35.681236, 139.767125
+    # Parse coordinates from command line arguments
+    lat, lon = parse_coordinates()
     
     # Check availability first
     print("=== データセット利用可能性の確認 ===")
     try:
         # Check availability with country parameter for Japan
         availability = check_availability(lat, lon, "JP")
-        print(f"対象地点: {lat:.3f}, {lon:.3f} (日本)")
+        print(f"対象地点: ({lat:.6f}, {lon:.6f})")
         print(f"利用可能なデータセット: {availability}")
         
         # Use available datasets directly
@@ -114,7 +157,7 @@ if __name__ == "__main__":
 
     # Print current weather
     current = weather_data["currentWeather"]
-    print("=== 現在の天気（東京駅） ===")
+    print("=== 現在の天気 ===")
     print(f"気温: {current['temperature']:.1f}°C")
     print(f"体感温度: {current['temperatureApparent']:.1f}°C") 
     print(f"天候: {current['conditionCode']}")

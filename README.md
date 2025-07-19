@@ -88,32 +88,70 @@ cp .env.example .env
 
 ## 使い方 / Usage
 
+### 基本的な使用方法 / Basic Usage
+
 ```bash
+# デフォルト（東京駅）/ Default (Tokyo Station)
 uv run python weatherkit_sample.py
+
+# 任意の地点を指定 / Specify custom location
+uv run python weatherkit_sample.py [緯度] [経度]
 ```
 
-デフォルトでは東京駅の天気情報を取得します。座標を変更したい場合は、`weatherkit_sample.py`の以下の行を編集してください / By default, it fetches weather for Tokyo Station. To change the location, edit the following line in `weatherkit_sample.py`:
+### 使用例 / Examples
 
-```python
-lat, lon = 35.681236, 139.767125  # 東京駅 / Tokyo Station
+```bash
+# 東京駅の天気 / Weather for Tokyo Station (default)
+uv run python weatherkit_sample.py
+
+# サンフランシスコの天気 / Weather for San Francisco
+uv run python weatherkit_sample.py 37.7749 -122.4194
+
+# パリの天気 / Weather for Paris
+uv run python weatherkit_sample.py 48.8566 2.3522
+
+# シドニーの天気 / Weather for Sydney
+uv run python weatherkit_sample.py -33.8688 151.2093
 ```
+
+### 座標の取得方法 / How to Get Coordinates
+
+Google Mapsで場所を右クリックし、座標をコピーできます。座標は「緯度, 経度」の順番で表示されます。
+
+You can right-click on any location in Google Maps and copy the coordinates. Coordinates are displayed in "latitude, longitude" format.
 
 ## 出力例 / Example Output
 
 ```
-=== 現在の天気（東京駅） ===
-気温: 28.2°C
-体感温度: 28.0°C
-天候: MostlyCloudy
-雲量: 83%
-湿度: 76%
-風速: 18.9 m/s
+=== データセット利用可能性の確認 ===
+対象地点: (35.681236, 139.767125)
+利用可能なデータセット: ['currentWeather', 'forecastDaily', 'forecastHourly', 'forecastNextHour']
+
+取得するデータセット: currentWeather,forecastDaily,forecastHourly,forecastNextHour
+
+=== 現在の天気 ===
+気温: 26.7°C
+体感温度: 26.6°C
+天候: Cloudy
+雲量: 89%
+湿度: 83%
+風速: 18.3 m/s
 
 === 今後12時間の予報（日本時間） ===
-07/19 19:00: 28.4°C, MostlyCloudy, 雲量: 85%
-07/19 20:00: 27.6°C, MostlyCloudy, 雲量: 78%
-07/19 21:00: 26.9°C, MostlyCloudy, 雲量: 82%
+07/18 22:00: 26.1°C, MostlyCloudy, 雲量: 81%
+07/18 23:00: 25.8°C, MostlyCloudy, 雲量: 82%
+07/19 00:00: 25.5°C, MostlyCloudy, 雲量: 82%
 ...
+
+=== 今後7日間の予報 ===
+07/19 (Sat): 32.4°C / 25.0°C, MostlyCloudy
+07/20 (Sun): 32.8°C / 24.9°C, PartlyCloudy
+07/21 (Mon): 33.1°C / 24.9°C, PartlyCloudy
+...
+
+=== 次1時間の詳細予報 ===
+データポイント数: 83分間
+最初のデータ: 降水確率 0%, 降水強度 0.0mm/h
 ```
 
 ## ライセンス / License

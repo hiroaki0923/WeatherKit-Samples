@@ -137,6 +137,19 @@ You can right-click on any location in Google Maps and copy the coordinates. Coo
 湿度: 83%
 風速: 18.3 m/s
 
+=== 利用可能なフィールド分析（最初の時間データ） ===
+Required fields:
+  ✅ cloudCover: 0.81
+  ✅ conditionCode: MostlyCloudy
+  ✅ forecastStart: 2024-07-18T13:00:00Z
+  ✅ humidity: 0.83
+  ...
+Optional fields:
+  ✅ daylight: True
+  ❌ pressureTrend
+  ...
+==================================================
+
 === 今後12時間の予報（日本時間） ===
 07/18 22:00: 26.1°C, MostlyCloudy, 雲量: 81%
 07/18 23:00: 25.8°C, MostlyCloudy, 雲量: 82%

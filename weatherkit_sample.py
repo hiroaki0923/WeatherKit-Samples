@@ -177,10 +177,18 @@ if __name__ == "__main__":
             print("=== 利用可能なフィールド分析（最初の時間データ） ===")
             print("Required fields:")
             required_fields = [
-                "cloudCover", "conditionCode", "daylight", "forecastStart", "humidity", 
-                "precipitationChance", "precipitationIntensity", "pressure", "temperature", 
-                "temperatureApparent", "temperatureDewPoint", "uvIndex", "visibility", 
-                "windDirection", "windGust", "windSpeed"
+                "cloudCover",           # 雲量（0-1）
+                "conditionCode",        # 天気状態コード
+                "forecastStart",        # 予報開始時刻
+                "humidity",             # 湿度（0-1）
+                "precipitationChance",  # 降水確率（0-1）
+                "precipitationType",    # 降水タイプ
+                "pressure",             # 気圧（ミリバール）
+                "temperature",          # 気温（摂氏）
+                "temperatureApparent",  # 体感温度（摂氏）
+                "uvIndex",              # UV指数
+                "visibility",           # 視程（メートル）
+                "windSpeed"             # 風速（km/h）
             ]
             for field in required_fields:
                 status = "✅" if field in first_hour else "❌"
@@ -192,12 +200,16 @@ if __name__ == "__main__":
             
             print("\nOptional fields:")
             optional_fields = [
-                # 雲量詳細
-                "cloudCoverLowAltPct", "cloudCoverMidAltPct", "cloudCoverHighAltPct",
+                # 基本的な気象データ
+                "daylight",              # 昼/夜の判定
+                "pressureTrend",         # 気圧変化の傾向
+                "temperatureDewPoint",   # 露点温度（摂氏）
+                # 風データ
+                "windDirection",         # 風向（度）
+                "windGust",              # 突風速度（km/h）
                 # 降水・降雪データ
-                "precipitationType", "precipitationAmount", "snowfallIntensity", "snowfallAmount",
-                # 気圧・温度
-                "pressureTrend", "temperatureFeelsLike"
+                "precipitationAmount",   # 降水量（mm）
+                "snowfallIntensity"      # 降雪強度（mm/h）
             ]
             for field in optional_fields:
                 status = "✅" if field in first_hour else "❌"
@@ -206,10 +218,6 @@ if __name__ == "__main__":
                     print(f"  {status} {field}: {value}")
                 else:
                     print(f"  {status} {field}")
-            
-            print("\nAll available fields in response:")
-            for key, value in first_hour.items():
-                print(f"  {key}: {value}")
             print("=" * 50)
         
         for hour in weather_data["forecastHourly"]["hours"][:12]:
@@ -247,8 +255,17 @@ if __name__ == "__main__":
             print("=== 利用可能なフィールド分析（最初の日データ） ===")
             print("Required fields:")
             required_fields = [
-                "conditionCode", "forecastStart", "maxUvIndex", "moonPhase", 
-                "precipitationChance", "sunrise", "sunset", "temperatureMax", "temperatureMin"
+                "conditionCode",         # 天気状態コード
+                "forecastEnd",           # 予報終了時刻
+                "forecastStart",         # 予報開始時刻
+                "maxUvIndex",            # 最大UV指数
+                "moonPhase",             # 月相
+                "precipitationAmount",   # 降水量（mm）
+                "precipitationChance",   # 降水確率
+                "precipitationType",     # 降水タイプ
+                "snowfallAmount",        # 降雪量（mm）
+                "temperatureMax",        # 最高気温（摂氏）
+                "temperatureMin"         # 最低気温（摂氏）
             ]
             for field in required_fields:
                 status = "✅" if field in first_day else "❌"
@@ -260,20 +277,24 @@ if __name__ == "__main__":
             
             print("\nOptional fields:")
             optional_fields = [
-                # 基本的な気象データ
-                "cloudCover", "humidity", "pressure", "visibility",
-                # 降水・降雪データ
-                "precipitationAmount", "precipitationType", "snowfallAmount",
-                # 風データ
-                "windSpeedAvg", "windSpeedMax", "windGustSpeedMax",
-                # 温度関連
-                "temperatureMaxTime", "temperatureMinTime",
-                # 時刻データ
-                "forecastEnd", "moonrise", "moonset", "solarMidnight", "solarNoon",
-                "sunriseCivil", "sunriseNautical", "sunriseAstronomical",
-                "sunsetCivil", "sunsetNautical", "sunsetAstronomical",
-                # ネストされた予報データ
-                "daytimeForecast", "overnightForecast", "restOfDayForecast"
+                # 昼夜の予報
+                "daytimeForecast",       # 昼間（7AM-7PM）の予報
+                "overnightForecast",     # 夜間（7PM-7AM）の予報
+                # 月の出入り
+                "moonrise",              # 月の出
+                "moonset",               # 月の入り
+                # 太陽関連時刻
+                "solarMidnight",         # 太陽が最も低い時刻
+                "solarNoon",             # 太陽が最も高い時刻
+                "sunrise",               # 日の出
+                "sunset",                # 日の入り
+                # 薄明時刻
+                "sunriseAstronomical",   # 天文薄明開始（太陽高度-18°）
+                "sunriseCivil",          # 市民薄明開始（太陽高度-6°）
+                "sunriseNautical",       # 航海薄明開始（太陽高度-12°）
+                "sunsetAstronomical",    # 天文薄明終了（太陽高度-18°）
+                "sunsetCivil",           # 市民薄明終了（太陽高度-6°）
+                "sunsetNautical"         # 航海薄明終了（太陽高度-12°）
             ]
             for field in optional_fields:
                 status = "✅" if field in first_day else "❌"
@@ -285,10 +306,6 @@ if __name__ == "__main__":
                     print(f"  {status} {field}: {value}")
                 else:
                     print(f"  {status} {field}")
-            
-            print("\nAll available fields in response:")
-            for key, value in first_day.items():
-                print(f"  {key}: {value}")
             print("=" * 50)
         
         for day in weather_data["forecastDaily"]["days"][:7]:

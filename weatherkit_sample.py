@@ -128,6 +128,47 @@ if __name__ == "__main__":
         # 日本時間のタイムゾーンを指定
         tokyo_tz = ZoneInfo("Asia/Tokyo")
         
+        # 最初の時間データのフィールドを詳細分析
+        if weather_data["forecastHourly"]["hours"]:
+            first_hour = weather_data["forecastHourly"]["hours"][0]
+            print("=== 利用可能なフィールド分析（最初の時間データ） ===")
+            print("Required fields:")
+            required_fields = [
+                "cloudCover", "conditionCode", "daylight", "forecastStart", "humidity", 
+                "precipitationChance", "precipitationIntensity", "pressure", "temperature", 
+                "temperatureApparent", "temperatureDewPoint", "uvIndex", "visibility", 
+                "windDirection", "windGust", "windSpeed"
+            ]
+            for field in required_fields:
+                status = "✅" if field in first_hour else "❌"
+                if status == "✅":
+                    value = first_hour[field]
+                    print(f"  {status} {field}: {value}")
+                else:
+                    print(f"  {status} {field}")
+            
+            print("\nOptional fields:")
+            optional_fields = [
+                # 雲量詳細
+                "cloudCoverLowAltPct", "cloudCoverMidAltPct", "cloudCoverHighAltPct",
+                # 降水・降雪データ
+                "precipitationType", "precipitationAmount", "snowfallIntensity", "snowfallAmount",
+                # 気圧・温度
+                "pressureTrend", "temperatureFeelsLike"
+            ]
+            for field in optional_fields:
+                status = "✅" if field in first_hour else "❌"
+                if status == "✅":
+                    value = first_hour[field]
+                    print(f"  {status} {field}: {value}")
+                else:
+                    print(f"  {status} {field}")
+            
+            print("\nAll available fields in response:")
+            for key, value in first_hour.items():
+                print(f"  {key}: {value}")
+            print("=" * 50)
+        
         for hour in weather_data["forecastHourly"]["hours"][:12]:
             # キー名を確認しながら安全にアクセス
             forecast_time_str = hour.get("forecastStart", "N/A")
@@ -156,6 +197,56 @@ if __name__ == "__main__":
     if "forecastDaily" in weather_data and "days" in weather_data["forecastDaily"]:
         print("\n=== 今後7日間の予報 ===")
         tokyo_tz = ZoneInfo("Asia/Tokyo")
+        
+        # 最初の日のデータでフィールドを詳細分析
+        if weather_data["forecastDaily"]["days"]:
+            first_day = weather_data["forecastDaily"]["days"][0]
+            print("=== 利用可能なフィールド分析（最初の日データ） ===")
+            print("Required fields:")
+            required_fields = [
+                "conditionCode", "forecastStart", "maxUvIndex", "moonPhase", 
+                "precipitationChance", "sunrise", "sunset", "temperatureMax", "temperatureMin"
+            ]
+            for field in required_fields:
+                status = "✅" if field in first_day else "❌"
+                if status == "✅":
+                    value = first_day[field]
+                    print(f"  {status} {field}: {value}")
+                else:
+                    print(f"  {status} {field}")
+            
+            print("\nOptional fields:")
+            optional_fields = [
+                # 基本的な気象データ
+                "cloudCover", "humidity", "pressure", "visibility",
+                # 降水・降雪データ
+                "precipitationAmount", "precipitationType", "snowfallAmount",
+                # 風データ
+                "windSpeedAvg", "windSpeedMax", "windGustSpeedMax",
+                # 温度関連
+                "temperatureMaxTime", "temperatureMinTime",
+                # 時刻データ
+                "forecastEnd", "moonrise", "moonset", "solarMidnight", "solarNoon",
+                "sunriseCivil", "sunriseNautical", "sunriseAstronomical",
+                "sunsetCivil", "sunsetNautical", "sunsetAstronomical",
+                # ネストされた予報データ
+                "daytimeForecast", "overnightForecast", "restOfDayForecast"
+            ]
+            for field in optional_fields:
+                status = "✅" if field in first_day else "❌"
+                if status == "✅":
+                    value = first_day[field]
+                    # ネストされたオブジェクトの場合は簡潔に表示
+                    if isinstance(value, dict):
+                        value = f"{{...}} (ネストされたオブジェクト)"
+                    print(f"  {status} {field}: {value}")
+                else:
+                    print(f"  {status} {field}")
+            
+            print("\nAll available fields in response:")
+            for key, value in first_day.items():
+                print(f"  {key}: {value}")
+            print("=" * 50)
         
         for day in weather_data["forecastDaily"]["days"][:7]:
             forecast_date_str = day.get("forecastStart", "N/A")
